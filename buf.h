@@ -21,7 +21,7 @@ void buf_free(struct buf *);
  * tgt - The buffer to read into
  * Returns: The number of bytes read
  */
-int buf_read(struct buf *, int pos, int cnt, char *tgt);
+int buf_read(struct buf const *, int pos, int cnt, char *tgt);
 
 /*
  * Writes a set number of bytes to the buffer
@@ -30,6 +30,6 @@ int buf_read(struct buf *, int pos, int cnt, char *tgt);
  * cnt - The number of bytes to write
  * tgt - The buffer to write from
  */
-void buf_write(struct buf **, int pos, int cnt, char *tgt);
+void buf_write(struct buf **, int pos, int cnt, char const *tgt);
 
 #endif // BUF_H_

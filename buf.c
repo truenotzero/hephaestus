@@ -45,7 +45,7 @@ void buf_realloc(struct buf **b) {
 
 void buf_free(struct buf *b) { free(b); }
 
-int buf_read(struct buf *b, int pos, int cnt, char *tgt) {
+int buf_read(struct buf const *b, int pos, int cnt, char *tgt) {
   // check runoff
   if (pos + cnt > b->sz) {
     cnt = b->sz - pos;
@@ -59,10 +59,18 @@ int buf_read(struct buf *b, int pos, int cnt, char *tgt) {
   return i;
 }
 
-void buf_write(struct buf **pb, int pos, int cnt, char *tgt) {
+void buf_write(struct buf **pb, int pos, int cnt, char const *tgt) {
   // check if realloc is needed
-  struct buf *p = *pb;
-  if (pos + cnt > p->capacity) {
+  struct buf *b = *pb;
+  while (pos + cnt > b->capacity) {
     // reallocation needed
+    buf_realloc(pb);
+    b = *pb;
   }
+
+  for (int i = 0; i < cnt; ++i) {
+    b->data[pos + i] = tgt[i];
+  }
+
+  b->sz += cnt;
 }
