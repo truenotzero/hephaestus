@@ -74,3 +74,5 @@ void buf_write(struct buf **pb, int pos, int cnt, char const *tgt) {
 
   b->sz += cnt;
 }
+
+int buf_sz(struct buf const *e) { return e->sz; }

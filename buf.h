@@ -32,4 +32,9 @@ int buf_read(struct buf const *, int pos, int cnt, char *tgt);
  */
 void buf_write(struct buf **, int pos, int cnt, char const *tgt);
 
+/*
+ * Get the current size of the buffer
+ */
+int buf_sz(struct buf const *);
+
 #endif // BUF_H_
