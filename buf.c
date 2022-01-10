@@ -19,28 +19,19 @@ struct buf {
 
 struct buf *buf_alloc(int sz) {
   const int default_size = 1024;
-  struct buf *b;
-  if (!sz) {
-    // Create default buffer
-    b = malloc(sizeof(*b) + default_size * sizeof(*b->data));
-    b->sz = 0;
-    b->capacity = default_size;
-  } else {
-    // Create buffer with size
-    b = calloc(1, sizeof(*b) + 2 * sz * sizeof(*b->data));
-    b->sz = sz;
-    b->capacity = 2 * sz;
-  }
-  return b;
+  return buf_own(0, sz ? sz : default_size);
+}
+
+struct buf *buf_own(void *b, int sz) {
+  struct buf *ret = realloc(b, sizeof(*ret) + 2 * sz * sizeof(*ret->data));
+  ret->sz = sz;
+  ret->capacity = 2 * sz;
+  return ret;
 }
 
 void buf_realloc(struct buf **b) {
-  struct buf *ob = *b;
-  struct buf *nb = malloc(sizeof(*nb) + 2 * ob->capacity * sizeof(*nb->data));
-  nb->sz = ob->sz;
-  nb->capacity = 2 * ob->capacity;
-  free(ob);
-  *b = nb;
+  *b = realloc(*b, sizeof(**b) + 2 * (*b)->capacity * sizeof(*(*b)->data));
+  (*b)->capacity *= 2;
 }
 
 void buf_free(struct buf *b) { free(b); }
@@ -51,12 +42,11 @@ int buf_read(struct buf const *b, int pos, int cnt, char *tgt) {
     cnt = b->sz - pos;
   };
 
-  int i;
-  for (i = 0; i < cnt; ++i) {
+  for (int i = 0; i < cnt; ++i) {
     tgt[i] = b->data[pos + i];
   }
 
-  return i;
+  return cnt;
 }
 
 void buf_write(struct buf **pb, int pos, int cnt, char const *tgt) {

@@ -12,6 +12,18 @@ struct buf;
  */
 struct buf *buf_alloc(int sz);
 
+/*
+ * Creates a new dynamic buffer by taking ownership of an existing buffer
+ * b - The buffer to own
+ * sz - The buffer's size
+ * Returns: The new dynamic buffer, with its initial contents set to the owned
+ * buffer
+ */
+struct buf *buf_own(void *b, int sz);
+
+/*
+ * Close the buffer, freeing its resources
+ */
 void buf_free(struct buf *);
 
 /*
