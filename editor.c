@@ -17,6 +17,7 @@ struct editor *editor_new() {
 int editor_close(struct editor *e) {
   buf_free(e->buf);
   free(e);
+  return 0;
 }
 
 struct editor *editor_open(char const *path) {
@@ -44,6 +45,7 @@ struct editor *editor_open(char const *path) {
 
   // cleanup and return
   free(temp);
+  fclose(f);
   return e;
 }
 
@@ -56,8 +58,24 @@ int editor_save(struct editor const *e) {
     return err;
   }
 
-  // copy to temp buffer
+  // copy editor->buf to temp buf
+  // cast away `const` legal - read only access
+  struct buf const *b = editor_buf((struct editor *)e);
+  int sz = buf_sz(b);
+  char *temp = malloc(sz * sizeof(*temp));
+  if (sz != buf_read(b, 0, sz, temp)) {
+    // discrepancy between bytes read and buffer
+    return 1;
+  }
+  // write to disk
+  if (sz != fwrite(temp, sizeof(*temp), sz, f)) {
+    // discrepancy between bytes written to disk and elems in temp
+    return 2;
+  }
 
+  // clenaup and return
+  free(temp);
+  fclose(f);
   return 0;
 }
 

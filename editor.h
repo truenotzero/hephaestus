@@ -18,6 +18,7 @@ struct editor *editor_open(char const *path);
 
 /*
  * Save the current editor
+ * Returns: 0 for success
  */
 int editor_save(struct editor const *);
 
