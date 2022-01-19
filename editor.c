@@ -61,7 +61,7 @@ int editor_save(struct editor const *e) {
   // copy editor->buf to temp buf
   // cast away `const` legal - read only access
   struct buf const *b = editor_buf((struct editor *)e);
-  int sz = buf_sz(b);
+  size_t sz = buf_sz(b);
   char *temp = malloc(sz * sizeof(*temp));
   if (sz != buf_read(b, 0, sz, temp)) {
     // discrepancy between bytes read and buffer
