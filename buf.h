@@ -1,6 +1,8 @@
 #ifndef BUF_H_
 #define BUF_H_
 
+#include <stddef.h>
+
 /*
  * Implements a dynamically resizing buffer
  */

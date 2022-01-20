@@ -24,8 +24,8 @@ struct editor *editor_open(char const *path) {
   struct editor *e = editor_new();
   e->path = path;
 
-  FILE *f;
-  if (fopen_s(&f, path, "rb") != 0) {
+  FILE *f = fopen(path, "rb");
+  if (!f) {
     // failed to open
     editor_close(e);
     return 0;
@@ -50,12 +50,11 @@ struct editor *editor_open(char const *path) {
 }
 
 int editor_save(struct editor const *e) {
-  FILE *f;
+  FILE *f = fopen(e->path, "wb");
 
-  int err;
-  if ((err = fopen_s(&f, e->path, "wb")) != 0) {
+  if (!f) {
     // failed to open
-    return err;
+    return 1;
   }
 
   // copy editor->buf to temp buf
@@ -65,12 +64,12 @@ int editor_save(struct editor const *e) {
   char *temp = malloc(sz * sizeof(*temp));
   if (sz != buf_read(b, 0, sz, temp)) {
     // discrepancy between bytes read and buffer
-    return 1;
+    return 2;
   }
   // write to disk
   if (sz != fwrite(temp, sizeof(*temp), sz, f)) {
     // discrepancy between bytes written to disk and elems in temp
-    return 2;
+    return 3;
   }
 
   // clenaup and return
